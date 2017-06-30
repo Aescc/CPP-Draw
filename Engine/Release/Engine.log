@@ -1,0 +1,11 @@
+﻿  Game.cpp
+Game.cpp(125): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+Game.cpp(125): warning C4244: 'initializing': conversion from 'double' to 'const int', possible loss of data
+Game.cpp(191): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+Game.cpp(192): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Generating code
+  2 of 657 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Engine.vcxproj -> C:\Users\micha\Desktop\C++ Draw\Release\Engine.exe
