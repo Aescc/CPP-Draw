@@ -24,8 +24,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
-#include "Circle.h"
-#include "Overlay.h"
+#include "Canvas.h"
 
 class Game
 {
@@ -39,25 +38,12 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void DrawLine( int x0,int y0,int x1,int y1,int R,int G,int B,int inSize );
-	void DrawCircle( int x,int y,int size,int R,int G,int B );
-	int FindDist( int x0,int y0,int x1,int y1 ) const;
-	int FindSlope( int x0,int y0,int x1,int y1 ) const;
-	bool IsOnScreen( int x,int y ) const;
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	int size = 5;
-	int R = 255;
-	int G = 255;
-	int B = 255;
-	int currentCircle = 0;
-	static constexpr int MAX_CIRCLES = 999;
-	Circle circles[MAX_CIRCLES];
-	int liftCounter = 0;
-	Overlay overlay;
+	Canvas c;
 	/********************************/
 };
