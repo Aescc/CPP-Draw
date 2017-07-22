@@ -7,3 +7,11 @@
 * Down-Arrow = Shrink canvas vertically.
 * L-Bracket = Shrink brush size.
 * R-Bracket = Enlarge brush size.
+#### TODO:
+* Support for different colors.
+* Undo / redo feature.
+* Eraser.
+* Mover.
+* Color identifier.
+* Interface to contain above features.
+* Brush / tool images on top of the mouse.
