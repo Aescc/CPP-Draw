@@ -4,6 +4,8 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
+#include "Brush.h"
+
 class Canvas
 {
 public:
@@ -26,7 +28,10 @@ private:
 	int WIDTH  = Graphics::ScreenWidth;
 	int HEIGHT = Graphics::ScreenHeight;
 	float G_SIZE = 10.0f;
+	Color U_COLOR = Colors::Blue;
 	Color G_COLOR = Colors::Blue;
+	static constexpr Color BG_COLOR = Colors::White;
 	int PIXEL_NUM = WIDTH * HEIGHT;
 	Color *pixels;
+	Brush brush;
 };

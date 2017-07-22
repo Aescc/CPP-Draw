@@ -4,7 +4,7 @@ Canvas::Canvas()
 {
 	pixels = new Color[PIXEL_NUM];
 	for( int i = 0; i < PIXEL_NUM; ++i )
-		pixels[i] = Colors::White;
+		pixels[i] = BG_COLOR;
 	SetNewSize( 100,100,Graphics::ScreenWidth - 100,Graphics::ScreenHeight - 100 );
 }
 
@@ -16,6 +16,16 @@ Canvas::~Canvas()
 
 void Canvas::Update( Keyboard& kbd,Mouse& ms )
 {
+	// Tool swap.
+	if( kbd.KeyIsPressed( 66 ) )
+		brush.SetBrush();
+	if( kbd.KeyIsPressed( 69 ) )
+		brush.SetEraser();
+	if( kbd.KeyIsPressed( 86 ) )
+		brush.SetMover();
+	if( kbd.KeyIsPressed( 73 ) )
+		brush.SetEraser();
+
 	const int SIZE_CHANGE = 2;
 	// if( y > SIZE_CHANGE && HEIGHT < Graphics::ScreenHeight - SIZE_CHANGE )
 	{
@@ -43,8 +53,24 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 
 	if( ms.LeftIsPressed() )
 	{
-		MakeCircle( ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
-		ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
+		if( !brush.GetMover() && !brush.GetIdentify() )
+		{
+			if( brush.GetBrush() )
+				G_COLOR = U_COLOR;
+			if( brush.GetEraser() )
+				G_COLOR = BG_COLOR;
+
+			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
+			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
+		}
+		else if( brush.GetMover() )
+		{
+
+		}
+		else if( brush.GetIdentify() )
+		{
+			U_COLOR = pixels[ms.GetPosY() * WIDTH + ms.GetPosX()];
+		}
 	}
 	oldX = ms.GetPosX();
 	oldY = ms.GetPosY();
@@ -70,7 +96,7 @@ void Canvas::SetNewSize( int in_x,int in_y,int in_w,int in_h )
 
 		PIXEL_NUM = WIDTH * HEIGHT;
 		for( int i = 0; i < PIXEL_NUM; ++i )
-			pixels[i] = Colors::White;
+			pixels[i] = BG_COLOR;
 	}
 }
 
