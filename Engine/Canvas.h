@@ -15,6 +15,9 @@ public:
 	void Draw( Graphics& gfx ) const;
 	void SetNewSize( int x,int y,int w,int h );
 private:
+	void MovePixels( int xMove,int yMove );
+	Color& GetPixel( int x,int y ) const;
+private:
 	void MakeCircle( int x,int y,int size,Color c );
 	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c );
 	void Swap( int& pos1,int& pos2 );

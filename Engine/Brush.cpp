@@ -24,22 +24,22 @@ void Brush::SetIdentify()
 	identify = true;
 }
 
-bool Brush::GetBrush()
+bool Brush::GetBrush() const
 {
 	return brush;
 }
 
-bool Brush::GetEraser()
+bool Brush::GetEraser() const
 {
 	return eraser;
 }
 
-bool Brush::GetMover()
+bool Brush::GetMover() const
 {
 	return mover;
 }
 
-bool Brush::GetIdentify()
+bool Brush::GetIdentify() const
 {
 	return identify;
 }

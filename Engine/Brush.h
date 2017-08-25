@@ -9,10 +9,10 @@ public:
 	void SetEraser();
 	void SetMover();
 	void SetIdentify();
-	bool GetBrush();
-	bool GetEraser();
-	bool GetMover();
-	bool GetIdentify();
+	bool GetBrush() const;
+	bool GetEraser() const;
+	bool GetMover() const;
+	bool GetIdentify() const;
 private:
 	void SetAllFalse();
 private:
