@@ -1,6 +1,8 @@
 #include "Canvas.h"
 
-Canvas::Canvas()
+Canvas::Canvas( Graphics& gfx_in )
+	:
+	gfx( gfx_in )
 {
 	pixels = new Color[PIXEL_NUM];
 
@@ -84,7 +86,7 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 	oldY = ms.GetPosY();
 }
 
-void Canvas::Draw( Graphics& gfx ) const
+void Canvas::Draw() const
 {
 	for( int i = x; i < HEIGHT; ++i )
 	{
@@ -142,7 +144,26 @@ Color& Canvas::GetPixel( int x,int y ) const
 
 void Canvas::MakeCircle( int x,int y,int size,Color c )
 {
-	const int rad_sq = size * size;
+	// TODO: Optimize this so it doesn't draw over itself a bunch. 
+	const int radSq = size * size;
+	const int outsideCircleSize = 4;
+
+	// I'll deal with this later :)
+	// for( int i = y - size; i < y + size; ++i )
+	// {
+	// 	for( int j = x - size; j < x + size; ++j )
+	// 	{
+	// 		const int xDiff = x - j;
+	// 		const int yDiff = y - i;
+	// 
+	// 		if( xDiff * xDiff + yDiff * yDiff < radSq &&
+	// 			i * WIDTH + j > 0 && i * WIDTH + j < PIXEL_NUM )
+	// 		{
+	// 			pixels[i * WIDTH + j] = ( c + 5 ) / 2;
+	// 		}
+	// 	}
+	// }
+
 	for( int i = y - size; i < y + size; ++i )
 	{
 		for( int j = x - size; j < x + size; ++j )
@@ -150,7 +171,7 @@ void Canvas::MakeCircle( int x,int y,int size,Color c )
 			const int xDiff = x - j;
 			const int yDiff = y - i;
 
-			if( xDiff * xDiff + yDiff * yDiff < rad_sq &&
+			if( xDiff * xDiff + yDiff * yDiff < radSq &&
 				i * WIDTH + j > 0 && i * WIDTH + j < PIXEL_NUM )
 				pixels[i * WIDTH + j] = c;
 		}

@@ -1,10 +1,11 @@
-﻿  Brush.cpp
-  Canvas.cpp
+﻿  Canvas.cpp
   Game.cpp
   Main.cpp
   MainWindow.cpp
-Canvas.cpp(108): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+Canvas.cpp(110): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
   Generating code
-  All 1203 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  13 of 1203 functions ( 1.1%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Engine.vcxproj -> C:\Users\Michael\Desktop\CPP-Draw-master\x64\Release\Engine.exe

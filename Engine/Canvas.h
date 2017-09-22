@@ -9,10 +9,10 @@
 class Canvas
 {
 public:
-	Canvas();
+	Canvas( Graphics& gfx_in );
 	~Canvas();
 	void Update( Keyboard& kbd,Mouse& ms );
-	void Draw( Graphics& gfx ) const;
+	void Draw() const;
 
 	void SetNewSize( int x,int y,int w,int h );
 private:
@@ -32,7 +32,7 @@ private:
 	int oldX;
 	int oldY;
 
-	int WIDTH  = Graphics::ScreenWidth;
+	int WIDTH = Graphics::ScreenWidth;
 	int HEIGHT = Graphics::ScreenHeight;
 
 	float G_SIZE = 10.0f;
@@ -43,4 +43,6 @@ private:
 	int PIXEL_NUM = WIDTH * HEIGHT;
 	Color *pixels;
 	Brush brush;
+
+	Graphics& gfx;
 };

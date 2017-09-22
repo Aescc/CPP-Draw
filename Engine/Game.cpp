@@ -24,7 +24,8 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	c( gfx )
 {
 }
 
@@ -43,5 +44,5 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	c.Draw( gfx );
+	c.Draw();
 }
