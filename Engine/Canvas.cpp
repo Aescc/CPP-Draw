@@ -20,16 +20,16 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 {
 	// Tool swap.
 	if( kbd.KeyIsPressed( 66 ) )
-		brush.SetBrush();
+		brush.Set( Brush::Tool::Brush );
 
 	if( kbd.KeyIsPressed( 69 ) )
-		brush.SetEraser();
+		brush.Set( Brush::Tool::Eraser );
 
 	if( kbd.KeyIsPressed( 86 ) )
-		brush.SetMover();
+		brush.Set( Brush::Tool::Mover );
 
 	if( kbd.KeyIsPressed( 73 ) )
-		brush.SetIdentify();
+		brush.Set( Brush::Tool::Identifier );
 
 	const int SIZE_CHANGE = 2;
 	// if( y > SIZE_CHANGE && HEIGHT < Graphics::ScreenHeight - SIZE_CHANGE )
@@ -62,20 +62,21 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 
 	if( ms.LeftIsPressed() )
 	{
-		if( !brush.GetMover() && !brush.GetIdentify() )
+		if( brush.CurTool() != Brush::Tool::Mover &&
+			brush.CurTool() != Brush::Tool::Identifier )
 		{
-			if( brush.GetBrush() )
+			if( brush.CurTool() == Brush::Tool::Brush )
 				G_COLOR = U_COLOR;
 
-			if( brush.GetEraser() )
+			if( brush.CurTool() == Brush::Tool::Eraser )
 				G_COLOR = BG_COLOR;
 
 			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
 			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
 		}
-		else if( brush.GetMover() )
+		else if( brush.CurTool() == Brush::Tool::Mover )
 			MovePixels( oldX - ms.GetPosX(),oldY - ms.GetPosY() );
-		else if( brush.GetIdentify() )
+		else if( brush.CurTool() == Brush::Tool::Identifier )
 			U_COLOR = pixels[ms.GetPosY() * WIDTH + ms.GetPosX()];
 	}
 
@@ -93,13 +94,13 @@ void Canvas::Draw( Graphics& gfx ) const
 
 	Color mouseColor = G_COLOR;
 
-	if( brush.GetEraser() )
+	if( brush.CurTool() == Brush::Tool::Eraser )
 		mouseColor = Colors::Red;
 
-	if( brush.GetIdentify() )
+	if( brush.CurTool() == Brush::Tool::Identifier )
 		mouseColor = Colors::Green;
 
-	if( brush.GetMover() )
+	if( brush.CurTool() == Brush::Tool::Mover )
 		mouseColor = Colors::Gray;
 
 	if( oldX - G_SIZE > 0 && oldX + G_SIZE < Graphics::ScreenWidth &&
