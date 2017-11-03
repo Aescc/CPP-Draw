@@ -20,8 +20,7 @@ private:
 	void MakeCircle( int x,int y,int size,Color c );
 	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c );
 	void Swap( int& pos1,int& pos2 );
-	int FindDist( int x0,int y0,int x1,int y1 ) const;
-	int FindSlope( int x0,int y0,int x1,int y1 ) const;
+	float FindDist( int x0,int y0,int x1,int y1 ) const;
 private:
 	int x = 0;
 	int y = 0;

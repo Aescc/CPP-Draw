@@ -124,10 +124,10 @@ void Canvas::Draw() const
 		mouseColor = Colors::Gray;
 	}
 
-	if( oldX - size > 0 && oldX + size < Graphics::ScreenWidth &&
-		oldY - size > 0 && oldY + size < Graphics::ScreenHeight )
+	if( oldX - int( size ) > 0 && oldX + int( size ) < Graphics::ScreenWidth &&
+		oldY - int( size ) > 0 && oldY + int( size ) < Graphics::ScreenHeight )
 	{
-		gfx.DrawCircle( oldX,oldY,size,mouseColor );
+		gfx.DrawCircle( oldX,oldY,int( size ),mouseColor );
 	}
 }
 
@@ -223,15 +223,15 @@ void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
 		return;
 	}
 
-	int distance = FindDist( x0,y0,x1,y1 ) + 1;
+	float distance = FindDist( x0,y0,x1,y1 ) + 1;
 
-	float ySlope = ( float )( y1 - y0 ) / ( float )distance;
-	float xSlope = ( float )( x1 - x0 ) / ( float )distance;
+	float ySlope = ( float )( y1 - y0 ) / distance;
+	float xSlope = ( float )( x1 - x0 ) / distance;
 
-	for( int i = 0; i < distance; ++i )
+	for( int i = 0; i < int( distance ); ++i )
 	{
-		float newX = x0 + i * xSlope + 0.5f;
-		float newY = y0 + i * ySlope + 0.5f;
+		const float newX = x0 + 0.5f + i * xSlope;
+		const float newY = y0 + 0.5f + i * ySlope;
 		MakeCircle( int( newX ),int( newY ),in_size,c );
 	}
 }
@@ -243,24 +243,10 @@ void Canvas::Swap( int& pos1,int& pos2 )
 	pos2 = temp;
 }
 
-int Canvas::FindDist( int x0,int y0,int x1,int y1 ) const
+float Canvas::FindDist( int x0,int y0,int x1,int y1 ) const
 {
 	const float deltaX = float( x1 ) - float( x0 );
 	const float deltaY = float( y1 ) - float( y0 );
 	const float dist = sqrt( ( deltaX * deltaX ) + ( deltaY * deltaY ) );
-	return int( dist );
-}
-
-int Canvas::FindSlope( int x0,int y0,int x1,int y1 ) const
-{
-	const int deltaX = x1 - x0;
-	const int deltaY = y1 - y0;
-
-	if( deltaX == 0 )
-	{
-		return 0;
-	}
-
-	const int slope = deltaY / deltaX;
-	return slope;
+	return dist;
 }
