@@ -109,7 +109,6 @@ void Canvas::Draw() const
 			gfx.PutPixel( j,i,pixels[i * width + j] );
 		}
 	}
-
 	Color mouseColor = curColor;
 	if( brush.CurTool() == Brush::Tool::Eraser )
 	{
@@ -147,17 +146,6 @@ void Canvas::Size( int in_x,int in_y,int in_w,int in_h )
 	}
 }
 
-void Canvas::MovePixels( int xMove,int yMove )
-{
-	for( int i = 1; i < height + 1; ++i )
-	{
-		for( int j = 1; j < width + 1; ++j )
-		{
-			GetPixel( j - 1,i - 1 ) = Colors::Magenta;
-		}
-	}
-}
-
 Color& Canvas::GetPixel( int x,int y ) const
 {
 	return pixels[y * width + x];
@@ -165,19 +153,16 @@ Color& Canvas::GetPixel( int x,int y ) const
 
 void Canvas::MakeCircle( int x,int y,int size,Color c )
 {
-	// TODO: Optimize this so it doesn't draw over itself a bunch. 
 	const int radSq = size * size;
-	const int outsideCircleSize = 4;
-
 	for( int i = y - size; i < y + size; ++i )
 	{
 		for( int j = x - size; j < x + size; ++j )
 		{
 			const int xDiff = x - j;
 			const int yDiff = y - i;
-
 			if( xDiff * xDiff + yDiff * yDiff < radSq &&
-				i * width + j > 0 && i * width + j < width * height )
+				i * width + j > 0 && i * width + j < width * height &&
+				GetPixel( j,i ) != c )
 			{
 				pixels[i * width + j] = c;
 			}
@@ -204,7 +189,6 @@ void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
 		}
 		return;
 	}
-
 	if( x0 == x1 )
 	{
 		if( y0 > y1 )
@@ -222,12 +206,9 @@ void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
 		}
 		return;
 	}
-
 	float distance = FindDist( x0,y0,x1,y1 ) + 1;
-
 	float ySlope = ( float )( y1 - y0 ) / distance;
 	float xSlope = ( float )( x1 - x0 ) / distance;
-
 	for( int i = 0; i < int( distance ); ++i )
 	{
 		const float newX = x0 + 0.5f + i * xSlope;

@@ -12,9 +12,8 @@ public:
 	~Canvas();
 	void Update( Keyboard& kbd,Mouse& ms );
 	void Draw() const;
-	void Size( int x,int y,int w,int h );
 private:
-	void MovePixels( int xMove,int yMove );
+	void Size( int x,int y,int w,int h );
 	Color& GetPixel( int x,int y ) const;
 private:
 	void MakeCircle( int x,int y,int size,Color c );
