@@ -23,7 +23,6 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
-
 #include "Canvas.h"
 
 class Game
