@@ -1,7 +1,7 @@
 # CPP-Draw
 ### Create instances of circles by clicking and dragging in a way that appears as the desired image or symbol.
 #### Key Binds
-* Arrow keys = Resize canvas.
+* Mouse on corner = Resize canvas.
 * L-Bracket = Shrink brush size.
 * R-Bracket = Enlarge brush size.
 #### TODO:
