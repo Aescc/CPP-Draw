@@ -12,7 +12,7 @@ public:
 	~Canvas();
 	void Update( Keyboard& kbd,Mouse& ms );
 	void Draw() const;
-	void SetNewSize( int x,int y,int w,int h );
+	void Size( int x,int y,int w,int h );
 private:
 	void MovePixels( int xMove,int yMove );
 	Color& GetPixel( int x,int y ) const;
@@ -27,13 +27,11 @@ private:
 	int y = 0;
 	int oldX;
 	int oldY;
-	int WIDTH = Graphics::ScreenWidth;
-	int HEIGHT = Graphics::ScreenHeight;
-	float G_SIZE = 10.0f;
-	Color U_COLOR = Colors::Blue;
-	Color G_COLOR = Colors::Blue;
-	static constexpr Color BG_COLOR = Colors::White;
-	int PIXEL_NUM = WIDTH * HEIGHT;
+	int width = gfx.ScreenWidth;
+	int height = gfx.ScreenHeight;
+	float size = 10.0f;
+	Color curColor = Colors::Blue;
+	static constexpr Color backgroundColor = Colors::White;
 	Color *pixels;
 	Brush brush;
 	Graphics& gfx;

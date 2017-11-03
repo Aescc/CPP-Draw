@@ -4,12 +4,12 @@ Canvas::Canvas( Graphics& gfx_in )
 	:
 	gfx( gfx_in )
 {
-	pixels = new Color[PIXEL_NUM];
-	for( int i = 0; i < PIXEL_NUM; ++i )
+	pixels = new Color[width * height];
+	for( int i = 0; i < width * height; ++i )
 	{
-		pixels[i] = BG_COLOR;
+		pixels[i] = backgroundColor;
 	}
-	SetNewSize( 100,100,Graphics::ScreenWidth - 100,Graphics::ScreenHeight - 100 );
+	Size( 100,100,Graphics::ScreenWidth - 100,Graphics::ScreenHeight - 100 );
 }
 
 Canvas::~Canvas()
@@ -41,33 +41,33 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 	const int SIZE_CHANGE = 2;
 	if( kbd.KeyIsPressed( VK_UP ) )
 	{
-		SetNewSize( x - SIZE_CHANGE,y,WIDTH,HEIGHT + SIZE_CHANGE );
+		Size( x - SIZE_CHANGE,y,width,height + SIZE_CHANGE );
 	}
 	if( kbd.KeyIsPressed( VK_DOWN ) )
 	{
-		SetNewSize( x + SIZE_CHANGE,y,WIDTH,HEIGHT - SIZE_CHANGE );
+		Size( x + SIZE_CHANGE,y,width,height - SIZE_CHANGE );
 	}
 	if( kbd.KeyIsPressed( VK_LEFT ) )
 	{
-		SetNewSize( x,y + SIZE_CHANGE,WIDTH - SIZE_CHANGE,HEIGHT );
+		Size( x,y + SIZE_CHANGE,width - SIZE_CHANGE,height );
 	}
 	if( kbd.KeyIsPressed( VK_RIGHT ) )
 	{
-		SetNewSize( x,y - SIZE_CHANGE,WIDTH + SIZE_CHANGE,HEIGHT );
+		Size( x,y - SIZE_CHANGE,width + SIZE_CHANGE,height );
 	}
 
 	float brushSizeChange = 1.0f;
-	if( G_SIZE < 10 )
+	if( size < 10 )
 	{
 		brushSizeChange = 0.3f;
 	}
-	if( kbd.KeyIsPressed( 219 ) && G_SIZE > 1 + brushSizeChange )
+	if( kbd.KeyIsPressed( 219 ) && size > 1 + brushSizeChange )
 	{
-		G_SIZE -= brushSizeChange;
+		size -= brushSizeChange;
 	}
 	if( kbd.KeyIsPressed( 221 ) )
 	{
-		G_SIZE += brushSizeChange;
+		size += brushSizeChange;
 	}
 
 	if( ms.LeftIsPressed() )
@@ -76,13 +76,15 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 			brush.CurTool() != Brush::Tool::Identifier )
 		{
 			if( brush.CurTool() == Brush::Tool::Brush )
-				G_COLOR = U_COLOR;
-
+			{
+				// curColor = U_COLOR;
+			}
 			if( brush.CurTool() == Brush::Tool::Eraser )
-				G_COLOR = BG_COLOR;
-
-			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
-			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( G_SIZE ),G_COLOR );
+			{
+				curColor = backgroundColor;
+			}
+			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
+			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 		}
 		else if( brush.CurTool() == Brush::Tool::Mover )
 		{
@@ -90,7 +92,7 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		}
 		else if( brush.CurTool() == Brush::Tool::Identifier )
 		{
-			U_COLOR = pixels[ms.GetPosY() * WIDTH + ms.GetPosX()];
+			curColor = pixels[ms.GetPosY() * width + ms.GetPosX()];
 		}
 	}
 
@@ -100,15 +102,15 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 
 void Canvas::Draw() const
 {
-	for( int i = x; i < HEIGHT; ++i )
+	for( int i = x; i < height; ++i )
 	{
-		for( int j = y; j < WIDTH; ++j )
+		for( int j = y; j < width; ++j )
 		{
-			gfx.PutPixel( j,i,pixels[i * WIDTH + j] );
+			gfx.PutPixel( j,i,pixels[i * width + j] );
 		}
 	}
 
-	Color mouseColor = G_COLOR;
+	Color mouseColor = curColor;
 	if( brush.CurTool() == Brush::Tool::Eraser )
 	{
 		mouseColor = Colors::Red;
@@ -122,36 +124,34 @@ void Canvas::Draw() const
 		mouseColor = Colors::Gray;
 	}
 
-	if( oldX - G_SIZE > 0 && oldX + G_SIZE < Graphics::ScreenWidth &&
-		oldY - G_SIZE > 0 && oldY + G_SIZE < Graphics::ScreenHeight )
+	if( oldX - size > 0 && oldX + size < Graphics::ScreenWidth &&
+		oldY - size > 0 && oldY + size < Graphics::ScreenHeight )
 	{
-		gfx.DrawCircle( oldX,oldY,G_SIZE,mouseColor );
+		gfx.DrawCircle( oldX,oldY,size,mouseColor );
 	}
 }
 
-void Canvas::SetNewSize( int in_x,int in_y,int in_w,int in_h )
+void Canvas::Size( int in_x,int in_y,int in_w,int in_h )
 {
 	if( in_x > 0 && in_x < in_h && in_y > 0 && in_y < in_w )
 	{
 		x = in_x;
 		y = in_y;
-		WIDTH = in_w;
-		HEIGHT = in_h;
-
-		PIXEL_NUM = WIDTH * HEIGHT;
-
-		for( int i = 0; i < PIXEL_NUM; ++i )
+		width = in_w;
+		height = in_h;
+		// PIXEL_NUM = WIDTH * HEIGHT;
+		for( int i = 0; i < width * height; ++i )
 		{
-			pixels[i] = BG_COLOR;
+			pixels[i] = backgroundColor;
 		}
 	}
 }
 
 void Canvas::MovePixels( int xMove,int yMove )
 {
-	for( int i = 1; i < HEIGHT + 1; ++i )
+	for( int i = 1; i < height + 1; ++i )
 	{
-		for( int j = 1; j < WIDTH + 1; ++j )
+		for( int j = 1; j < width + 1; ++j )
 		{
 			GetPixel( j - 1,i - 1 ) = Colors::Magenta;
 		}
@@ -160,7 +160,7 @@ void Canvas::MovePixels( int xMove,int yMove )
 
 Color& Canvas::GetPixel( int x,int y ) const
 {
-	return pixels[y * WIDTH + x];
+	return pixels[y * width + x];
 }
 
 void Canvas::MakeCircle( int x,int y,int size,Color c )
@@ -177,9 +177,9 @@ void Canvas::MakeCircle( int x,int y,int size,Color c )
 			const int yDiff = y - i;
 
 			if( xDiff * xDiff + yDiff * yDiff < radSq &&
-				i * WIDTH + j > 0 && i * WIDTH + j < PIXEL_NUM )
+				i * width + j > 0 && i * width + j < width * height )
 			{
-				pixels[i * WIDTH + j] = c;
+				pixels[i * width + j] = c;
 			}
 		}
 	}

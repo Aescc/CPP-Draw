@@ -1,4 +1,6 @@
 ﻿  Canvas.cpp
-c:\users\micha\desktop\cpp-draw-master\engine\canvas.cpp(107): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
-  Engine.vcxproj -> C:\Users\micha\Desktop\CPP-Draw-master\x64\Debug\Engine.exe
-  Engine.vcxproj -> C:\Users\micha\Desktop\CPP-Draw-master\x64\Debug\Engine.pdb (Partial PDB)
+  Game.cpp
+  Main.cpp
+  MainWindow.cpp
+c:\users\michael\desktop\tttfdt\engine\canvas.cpp(130): warning C4244: 'argument': conversion from 'const float' to 'int', possible loss of data
+  Engine.vcxproj -> C:\Users\Michael\Desktop\tttfdt\x64\Debug\Engine.exe
