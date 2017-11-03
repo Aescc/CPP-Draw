@@ -29,15 +29,11 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 	{
 		brush.Set( Brush::Tool::Eraser );
 	}
-	if( kbd.KeyIsPressed( 86 ) )
-	{
-		brush.Set( Brush::Tool::Mover );
-	}
 	if( kbd.KeyIsPressed( 73 ) )
 	{
 		brush.Set( Brush::Tool::Identifier );
 	}
-
+	/*
 	const int SIZE_CHANGE = 2;
 	if( kbd.KeyIsPressed( VK_UP ) )
 	{
@@ -55,7 +51,7 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 	{
 		Size( x,y - SIZE_CHANGE,width + SIZE_CHANGE,height );
 	}
-
+	*/
 	float brushSizeChange = 1.0f;
 	if( size < 10 )
 	{
@@ -70,29 +66,43 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		size += brushSizeChange;
 	}
 
+	MouseOnCorner( ms );
 	if( ms.LeftIsPressed() )
 	{
-		if( brush.CurTool() != Brush::Tool::Mover &&
-			brush.CurTool() != Brush::Tool::Identifier )
+		if( brush.CurTool() == Brush::Tool::Brush )
 		{
-			if( brush.CurTool() == Brush::Tool::Brush )
-			{
-				// curColor = U_COLOR;
-			}
-			if( brush.CurTool() == Brush::Tool::Eraser )
-			{
-				curColor = backgroundColor;
-			}
+			// curColor = U_COLOR;
 			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 		}
-		else if( brush.CurTool() == Brush::Tool::Mover )
+		else if( brush.CurTool() == Brush::Tool::Eraser )
 		{
-			MovePixels( oldX - ms.GetPosX(),oldY - ms.GetPosY() );
+			curColor = backgroundColor;
+			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
+			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 		}
 		else if( brush.CurTool() == Brush::Tool::Identifier )
 		{
 			curColor = pixels[ms.GetPosY() * width + ms.GetPosX()];
+		}
+		else if( brush.CurTool() == Brush::Tool::Resizer )
+		{
+			if( mouseResizePos == MouseResizer::TopLeft )
+			{
+				Size( ms.GetPosX(),ms.GetPosY(),width,height );
+			}
+			else if( mouseResizePos == MouseResizer::TopRight )
+			{
+				Size( x,ms.GetPosY(),ms.GetPosX(),height );
+			}
+			else if( mouseResizePos == MouseResizer::BotLeft )
+			{
+				Size( ms.GetPosX(),y,width,ms.GetPosY() );
+			}
+			else if( mouseResizePos == MouseResizer::BotRight )
+			{
+				Size( x,y,ms.GetPosX(),ms.GetPosY() );
+			}
 		}
 	}
 
@@ -102,9 +112,9 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 
 void Canvas::Draw() const
 {
-	for( int i = x; i < height; ++i )
+	for( int i = y; i < height; ++i )
 	{
-		for( int j = y; j < width; ++j )
+		for( int j = x; j < width; ++j )
 		{
 			gfx.PutPixel( j,i,pixels[i * width + j] );
 		}
@@ -118,7 +128,7 @@ void Canvas::Draw() const
 	{
 		mouseColor = Colors::Green;
 	}
-	if( brush.CurTool() == Brush::Tool::Mover )
+	if( brush.CurTool() == Brush::Tool::Resizer )
 	{
 		mouseColor = Colors::Gray;
 	}
@@ -162,9 +172,10 @@ void Canvas::MakeCircle( int x,int y,int size,Color c )
 			const int yDiff = y - i;
 			if( xDiff * xDiff + yDiff * yDiff < radSq &&
 				i * width + j > 0 && i * width + j < width * height &&
-				GetPixel( j,i ) != c )
+				!AreSameColor( GetPixel( j,i ),c ) )
 			{
-				pixels[i * width + j] = c;
+				// pixels[i * width + j] = c;
+				GetPixel( j,i ) = c;
 			}
 		}
 	}
@@ -230,4 +241,49 @@ float Canvas::FindDist( int x0,int y0,int x1,int y1 ) const
 	const float deltaY = float( y1 ) - float( y0 );
 	const float dist = sqrt( ( deltaX * deltaX ) + ( deltaY * deltaY ) );
 	return dist;
+}
+
+bool Canvas::MouseOnCorner( const Mouse& ms )
+{
+	// TODO: Make these if/else ifs less gross and less verbose.
+	if( brush.CurTool() != Brush::Tool::Resizer )
+	{
+		lastTool = brush.CurTool();
+	}
+	const float maxClickableDistance = 20.0f;
+	// if( FindDist( x,y,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance || 
+	// 	FindDist( x + width,y + height,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
+	if( FindDist( x,y,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
+	{
+		brush.Set( Brush::Tool::Resizer );
+		mouseResizePos = MouseResizer::TopLeft;
+	}
+	else if( FindDist( width,y,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
+	{
+		brush.Set( Brush::Tool::Resizer );
+		mouseResizePos = MouseResizer::TopRight;
+	}
+	else if( FindDist( x,height,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
+	{
+		brush.Set( Brush::Tool::Resizer );
+		mouseResizePos = MouseResizer::BotLeft;
+	}
+	else if( FindDist( width,height,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
+	{
+		brush.Set( Brush::Tool::Resizer );
+		mouseResizePos = MouseResizer::BotRight;
+	}
+	else
+	{
+		brush.Set( lastTool );
+	}
+	return false;
+}
+
+bool Canvas::AreSameColor( const Color c1,const Color c2 ) const
+{
+	return ( c1.GetR() == c2.GetR() &&
+		c1.GetG() == c2.GetG() &&
+		c1.GetB() == c2.GetB() &&
+		c1.GetA() == c2.GetA() );
 }

@@ -9,8 +9,8 @@ public:
 	{
 		Brush,
 		Eraser,
-		Mover,
-		Identifier
+		Identifier,
+		Resizer
 	};
 public:
 	void Set( Tool tool );
