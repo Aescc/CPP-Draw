@@ -54,7 +54,6 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		if( brush.CurTool() == Brush::Tool::Brush )
 		{
 			// curColor = U_COLOR;
-			curColor = Colors::Green;
 			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 		}
@@ -65,7 +64,11 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		}
 		else if( brush.CurTool() == Brush::Tool::Identifier )
 		{
-			curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
+			if( ms.GetPosX() >= x && ms.GetPosX() < width &&
+				ms.GetPosY() >= y && ms.GetPosY() < height )
+			{
+				curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
+			}
 		}
 		else if( brush.CurTool() == Brush::Tool::Resizer )
 		{
@@ -154,13 +157,17 @@ void Canvas::MakeCircle( int x,int y,int size,Color c ) const
 	{
 		for( int j = x - size; j < x + size; ++j )
 		{
-			const int xDiff = x - j;
-			const int yDiff = y - i;
-			if( xDiff * xDiff + yDiff * yDiff < radSq &&
-				i * width + j > 0 && i * width + j < width * height &&
-				GetPixel( j,i ) != c )
+			if( j >= this->x && j < this->width &&
+				i >= this->y && i < this->height )
 			{
-				pixels[i * width + j] = c;
+				const int xDiff = x - j;
+				const int yDiff = y - i;
+				if( xDiff * xDiff + yDiff * yDiff < radSq &&
+					i * width + j > 0 && i * width + j < width * height &&
+					GetPixel( j,i ) != c )
+				{
+					pixels[i * width + j] = c;
+				}
 			}
 		}
 	}
