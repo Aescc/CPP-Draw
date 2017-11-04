@@ -118,10 +118,10 @@ void Canvas::Draw() const
 		mouseColor = Colors::Gray;
 	}
 
-	if( oldX - int( size ) >= 0 && oldX + int( size ) < Graphics::ScreenWidth &&
-		oldY - int( size ) >= 0 && oldY + int( size ) < Graphics::ScreenHeight )
+	// if( oldX - int( size ) >= 0 && oldX + int( size ) < Graphics::ScreenWidth &&
+	// 	oldY - int( size ) >= 0 && oldY + int( size ) < Graphics::ScreenHeight )
 	{
-		gfx.DrawCircle( oldX,oldY,int( size ),mouseColor );
+		gfx.DrawCircleSafe( oldX,oldY,int( size ),mouseColor );
 	}
 }
 
