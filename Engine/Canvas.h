@@ -27,9 +27,8 @@ public:
 private:
 	void Size( int x,int y,int w,int h );
 	Color& GetPixel( int x,int y ) const;
-	void MakeCircle( int x,int y,int size,Color c );
-	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c );
-	void Swap( int& pos1,int& pos2 );
+	void MakeCircle( int x,int y,int size,Color c ) const;
+	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c ) const;
 	float FindDist( int x0,int y0,int x1,int y1 ) const;
 	bool MouseOnCorner( const Mouse& ms );
 	bool AreSameColor( const Color c1,const Color c2 ) const;
@@ -45,7 +44,7 @@ private:
 	static constexpr Color backgroundColor = Colors::White;
 	Brush::Tool lastTool = Brush::Tool::Brush;
 	MouseResizer mouseResizePos = MouseResizer::TopLeft;
-	Color *pixels;
+	Color *pixels = nullptr;
 	Brush brush;
 	Graphics& gfx;
 };

@@ -1,4 +1,5 @@
 #include "Canvas.h"
+#include <assert.h>
 
 Canvas::Canvas( Graphics& gfx_in )
 	:
@@ -33,31 +34,12 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 	{
 		brush.Set( Brush::Tool::Identifier );
 	}
-	/*
-	const int SIZE_CHANGE = 2;
-	if( kbd.KeyIsPressed( VK_UP ) )
-	{
-		Size( x - SIZE_CHANGE,y,width,height + SIZE_CHANGE );
-	}
-	if( kbd.KeyIsPressed( VK_DOWN ) )
-	{
-		Size( x + SIZE_CHANGE,y,width,height - SIZE_CHANGE );
-	}
-	if( kbd.KeyIsPressed( VK_LEFT ) )
-	{
-		Size( x,y + SIZE_CHANGE,width - SIZE_CHANGE,height );
-	}
-	if( kbd.KeyIsPressed( VK_RIGHT ) )
-	{
-		Size( x,y - SIZE_CHANGE,width + SIZE_CHANGE,height );
-	}
-	*/
 	float brushSizeChange = 1.0f;
-	if( size < 10 )
+	if( size < 10.0f )
 	{
 		brushSizeChange = 0.3f;
 	}
-	if( kbd.KeyIsPressed( 219 ) && size > 1 + brushSizeChange )
+	if( kbd.KeyIsPressed( 219 ) && size > 1.0f + brushSizeChange )
 	{
 		size -= brushSizeChange;
 	}
@@ -72,18 +54,18 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		if( brush.CurTool() == Brush::Tool::Brush )
 		{
 			// curColor = U_COLOR;
+			curColor = Colors::Green;
 			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 		}
 		else if( brush.CurTool() == Brush::Tool::Eraser )
 		{
-			curColor = backgroundColor;
-			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
-			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
+			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),backgroundColor );
+			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),backgroundColor );
 		}
 		else if( brush.CurTool() == Brush::Tool::Identifier )
 		{
-			curColor = pixels[ms.GetPosY() * width + ms.GetPosX()];
+			curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
 		}
 		else if( brush.CurTool() == Brush::Tool::Resizer )
 		{
@@ -133,8 +115,8 @@ void Canvas::Draw() const
 		mouseColor = Colors::Gray;
 	}
 
-	if( oldX - int( size ) > 0 && oldX + int( size ) < Graphics::ScreenWidth &&
-		oldY - int( size ) > 0 && oldY + int( size ) < Graphics::ScreenHeight )
+	if( oldX - int( size ) >= 0 && oldX + int( size ) < Graphics::ScreenWidth &&
+		oldY - int( size ) >= 0 && oldY + int( size ) < Graphics::ScreenHeight )
 	{
 		gfx.DrawCircle( oldX,oldY,int( size ),mouseColor );
 	}
@@ -156,12 +138,16 @@ void Canvas::Size( int in_x,int in_y,int in_w,int in_h )
 	}
 }
 
-Color& Canvas::GetPixel( int x,int y ) const
+Color& Canvas::GetPixel( int x_in,int y_in ) const
 {
+	assert( x_in >= x );
+	assert( x_in < width );
+	assert( y_in >= y );
+	assert( y_in < height );
 	return pixels[y * width + x];
 }
 
-void Canvas::MakeCircle( int x,int y,int size,Color c )
+void Canvas::MakeCircle( int x,int y,int size,Color c ) const
 {
 	const int radSq = size * size;
 	for( int i = y - size; i < y + size; ++i )
@@ -174,14 +160,13 @@ void Canvas::MakeCircle( int x,int y,int size,Color c )
 				i * width + j > 0 && i * width + j < width * height &&
 				!AreSameColor( GetPixel( j,i ),c ) )
 			{
-				// pixels[i * width + j] = c;
-				GetPixel( j,i ) = c;
+				pixels[i * width + j] = c;
 			}
 		}
 	}
 }
 
-void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
+void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c ) const
 {
 	if( y0 == y1 )
 	{
@@ -228,17 +213,10 @@ void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
 	}
 }
 
-void Canvas::Swap( int& pos1,int& pos2 )
-{
-	const int temp = pos1;
-	pos1 = pos2;
-	pos2 = temp;
-}
-
 float Canvas::FindDist( int x0,int y0,int x1,int y1 ) const
 {
-	const float deltaX = float( x1 ) - float( x0 );
-	const float deltaY = float( y1 ) - float( y0 );
+	const float deltaX = float( x1 - x0 );
+	const float deltaY = float( y1 - y0 );
 	const float dist = sqrt( ( deltaX * deltaX ) + ( deltaY * deltaY ) );
 	return dist;
 }
@@ -251,8 +229,6 @@ bool Canvas::MouseOnCorner( const Mouse& ms )
 		lastTool = brush.CurTool();
 	}
 	const float maxClickableDistance = 20.0f;
-	// if( FindDist( x,y,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance || 
-	// 	FindDist( x + width,y + height,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
 	if( FindDist( x,y,ms.GetPosX(),ms.GetPosY() ) <= maxClickableDistance )
 	{
 		brush.Set( Brush::Tool::Resizer );
