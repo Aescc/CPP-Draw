@@ -158,7 +158,7 @@ void Canvas::MakeCircle( int x,int y,int size,Color c ) const
 			const int yDiff = y - i;
 			if( xDiff * xDiff + yDiff * yDiff < radSq &&
 				i * width + j > 0 && i * width + j < width * height &&
-				!AreSameColor( GetPixel( j,i ),c ) )
+				GetPixel( j,i ) != c )
 			{
 				pixels[i * width + j] = c;
 			}
@@ -254,12 +254,4 @@ bool Canvas::MouseOnCorner( const Mouse& ms )
 		brush.Set( lastTool );
 	}
 	return false;
-}
-
-bool Canvas::AreSameColor( const Color c1,const Color c2 ) const
-{
-	return ( c1.GetR() == c2.GetR() &&
-		c1.GetG() == c2.GetG() &&
-		c1.GetB() == c2.GetB() &&
-		c1.GetA() == c2.GetA() );
 }

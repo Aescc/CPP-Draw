@@ -31,7 +31,6 @@ private:
 	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c ) const;
 	float FindDist( int x0,int y0,int x1,int y1 ) const;
 	bool MouseOnCorner( const Mouse& ms );
-	bool AreSameColor( const Color c1,const Color c2 ) const;
 private:
 	int x = 0;
 	int y = 0;
