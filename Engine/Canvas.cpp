@@ -67,7 +67,8 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 			if( ms.GetPosX() >= x && ms.GetPosX() < width &&
 				ms.GetPosY() >= y && ms.GetPosY() < height )
 			{
-				curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
+				curColor = pixels[ms.GetPosY() * width + ms.GetPosX()];
+				// curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
 			}
 		}
 		else if( brush.CurTool() == Brush::Tool::Resizer )
@@ -88,6 +89,11 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 			{
 				Size( x,y,ms.GetPosX(),ms.GetPosY() );
 			}
+		}
+
+		if( colorPicker.HandleClick( ms ) )
+		{
+			curColor = colorPicker.CheckColor();
 		}
 	}
 
@@ -118,6 +124,8 @@ void Canvas::Draw() const
 		mouseColor = Colors::Gray;
 	}
 
+	colorPicker.Draw( gfx );
+	
 	// if( oldX - int( size ) >= 0 && oldX + int( size ) < Graphics::ScreenWidth &&
 	// 	oldY - int( size ) >= 0 && oldY + int( size ) < Graphics::ScreenHeight )
 	{
@@ -150,7 +158,7 @@ Color& Canvas::GetPixel( int x_in,int y_in ) const
 	return pixels[y * width + x];
 }
 
-void Canvas::MakeCircle( int x,int y,int size,Color c ) const
+void Canvas::MakeCircle( int x,int y,int size,Color c )
 {
 	const int radSq = size * size;
 	for( int i = y - size; i < y + size; ++i )
@@ -163,8 +171,8 @@ void Canvas::MakeCircle( int x,int y,int size,Color c ) const
 				const int xDiff = x - j;
 				const int yDiff = y - i;
 				if( xDiff * xDiff + yDiff * yDiff < radSq &&
-					i * width + j > 0 && i * width + j < width * height &&
-					GetPixel( j,i ) != c )
+					i * width + j > 0 && i * width + j < width * height /*&&
+					GetPixel( j,i ) != c*/ )
 				{
 					pixels[i * width + j] = c;
 				}
@@ -173,7 +181,7 @@ void Canvas::MakeCircle( int x,int y,int size,Color c ) const
 	}
 }
 
-void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c ) const
+void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
 {
 	if( y0 == y1 )
 	{
