@@ -155,7 +155,7 @@ Color& Canvas::GetPixel( int x_in,int y_in ) const
 	assert( x_in < width );
 	assert( y_in >= y );
 	assert( y_in < height );
-	return pixels[y * width + x];
+	return pixels[y_in * width + x_in];
 }
 
 void Canvas::MakeCircle( int x,int y,int size,Color c )
