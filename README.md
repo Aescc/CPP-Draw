@@ -5,11 +5,8 @@
 * L-Bracket = Shrink brush size.
 * R-Bracket = Enlarge brush size.
 #### TODO:
-* Support for different colors.
 * Undo / redo feature.
 * Mover.
-* Eraser.
-* Color identifier.
-* Interface to contain above features.
-* Brush / tool images on top of the mouse.
+* Interface to contain all the tools.
+* Brush / tool images on top of the mouse instead of colored circles.
 * File save and load feature.
