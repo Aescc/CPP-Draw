@@ -355,7 +355,7 @@ void Graphics::DrawCircleSafe( int x,int y,int size,Color c )
 			const int yDiff = y - i;
 			if( xDiff * xDiff + yDiff * yDiff < radSq &&
 				j >= 0 && j < ScreenWidth &&
-				i >= 0 && i < ScreenWidth )
+				i >= 0 && i < ScreenHeight )
 			{
 				PutPixel( j,i,c );
 			}
