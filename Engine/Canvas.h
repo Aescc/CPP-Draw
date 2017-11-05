@@ -4,6 +4,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include "Brush.h"
+#include "RGBSlider.h"
 
 class Canvas
 {
@@ -27,11 +28,10 @@ public:
 private:
 	void Size( int x,int y,int w,int h );
 	Color& GetPixel( int x,int y ) const;
-	void MakeCircle( int x,int y,int size,Color c ) const;
-	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c ) const;
+	void MakeCircle( int x,int y,int size,Color c );
+	void ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c );
 	float FindDist( int x0,int y0,int x1,int y1 ) const;
 	bool MouseOnCorner( const Mouse& ms );
-	bool AreSameColor( const Color c1,const Color c2 ) const;
 private:
 	int x = 0;
 	int y = 0;
@@ -46,5 +46,6 @@ private:
 	MouseResizer mouseResizePos = MouseResizer::TopLeft;
 	Color *pixels = nullptr;
 	Brush brush;
+	RGBSlider colorPicker;
 	Graphics& gfx;
 };

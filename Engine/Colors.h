@@ -91,6 +91,17 @@ public:
 	{
 		dword = (dword & 0xFFFFFF00u) | b;
 	}
+	bool operator==( Color c )
+	{
+		return ( c.GetR() == GetR() &&
+			c.GetG() == GetG() &&
+			c.GetB() == GetB() &&
+			c.GetA() == GetA() );
+	}
+	bool operator !=( Color c )
+	{
+		return !( c == *this );
+	}
 };
 
 namespace Colors

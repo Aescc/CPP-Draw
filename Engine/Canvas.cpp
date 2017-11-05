@@ -54,7 +54,6 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		if( brush.CurTool() == Brush::Tool::Brush )
 		{
 			// curColor = U_COLOR;
-			curColor = Colors::Green;
 			MakeCircle( ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 			ConnectLine( oldX,oldY,ms.GetPosX(),ms.GetPosY(),int( size ),curColor );
 		}
@@ -65,7 +64,12 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 		}
 		else if( brush.CurTool() == Brush::Tool::Identifier )
 		{
-			curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
+			if( ms.GetPosX() >= x && ms.GetPosX() < width &&
+				ms.GetPosY() >= y && ms.GetPosY() < height )
+			{
+				curColor = pixels[ms.GetPosY() * width + ms.GetPosX()];
+				// curColor = GetPixel( ms.GetPosX(),ms.GetPosY() );
+			}
 		}
 		else if( brush.CurTool() == Brush::Tool::Resizer )
 		{
@@ -85,6 +89,11 @@ void Canvas::Update( Keyboard& kbd,Mouse& ms )
 			{
 				Size( x,y,ms.GetPosX(),ms.GetPosY() );
 			}
+		}
+
+		if( colorPicker.HandleClick( ms ) )
+		{
+			curColor = colorPicker.CheckColor();
 		}
 	}
 
@@ -115,10 +124,12 @@ void Canvas::Draw() const
 		mouseColor = Colors::Gray;
 	}
 
-	if( oldX - int( size ) >= 0 && oldX + int( size ) < Graphics::ScreenWidth &&
-		oldY - int( size ) >= 0 && oldY + int( size ) < Graphics::ScreenHeight )
+	colorPicker.Draw( gfx );
+	
+	// if( oldX - int( size ) >= 0 && oldX + int( size ) < Graphics::ScreenWidth &&
+	// 	oldY - int( size ) >= 0 && oldY + int( size ) < Graphics::ScreenHeight )
 	{
-		gfx.DrawCircle( oldX,oldY,int( size ),mouseColor );
+		gfx.DrawCircleSafe( oldX,oldY,int( size ),mouseColor );
 	}
 }
 
@@ -144,29 +155,33 @@ Color& Canvas::GetPixel( int x_in,int y_in ) const
 	assert( x_in < width );
 	assert( y_in >= y );
 	assert( y_in < height );
-	return pixels[y * width + x];
+	return pixels[y_in * width + x_in];
 }
 
-void Canvas::MakeCircle( int x,int y,int size,Color c ) const
+void Canvas::MakeCircle( int x,int y,int size,Color c )
 {
 	const int radSq = size * size;
 	for( int i = y - size; i < y + size; ++i )
 	{
 		for( int j = x - size; j < x + size; ++j )
 		{
-			const int xDiff = x - j;
-			const int yDiff = y - i;
-			if( xDiff * xDiff + yDiff * yDiff < radSq &&
-				i * width + j > 0 && i * width + j < width * height &&
-				!AreSameColor( GetPixel( j,i ),c ) )
+			if( j >= this->x && j < this->width &&
+				i >= this->y && i < this->height )
 			{
-				pixels[i * width + j] = c;
+				const int xDiff = x - j;
+				const int yDiff = y - i;
+				if( xDiff * xDiff + yDiff * yDiff < radSq &&
+					i * width + j > 0 && i * width + j < width * height /*&&
+					GetPixel( j,i ) != c*/ )
+				{
+					pixels[i * width + j] = c;
+				}
 			}
 		}
 	}
 }
 
-void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c ) const
+void Canvas::ConnectLine( int x0,int y0,int x1,int y1,int in_size,Color c )
 {
 	if( y0 == y1 )
 	{
@@ -254,12 +269,4 @@ bool Canvas::MouseOnCorner( const Mouse& ms )
 		brush.Set( lastTool );
 	}
 	return false;
-}
-
-bool Canvas::AreSameColor( const Color c1,const Color c2 ) const
-{
-	return ( c1.GetR() == c2.GetR() &&
-		c1.GetG() == c2.GetG() &&
-		c1.GetB() == c2.GetB() &&
-		c1.GetA() == c2.GetA() );
 }
