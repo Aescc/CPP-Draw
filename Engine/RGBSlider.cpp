@@ -1,5 +1,7 @@
 #include "RGBSlider.h"
 
+#include <cmath>
+
 RGBSlider::Slider::Slider( int x,int y,Color c )
 	:
 	x( x ),
@@ -15,7 +17,7 @@ bool RGBSlider::Slider::HandleClick( Mouse& ms )
 	{
 		const int posClicked = ms.GetPosY() - y;
 
-		activeColor = posClicked * 3;
+		activeColor = abs( 255 - posClicked * 3 );
 		return true;
 	}
 	return false;
@@ -37,7 +39,8 @@ void RGBSlider::Slider::Draw( Graphics& gfx ) const
 	{
 		nextColor = { 10,10,155 };
 	}
-	gfx.DrawRect( x,y + activeColor / 3,width,5,nextColor );
+	gfx.DrawRect( x,y + height - activeColor / 3,width,5,nextColor );
+	// gfx.DrawRect( x,activeColor / 3,width,5,nextColor );
 }
 
 bool RGBSlider::HandleClick( Mouse& ms )
